@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서버 이전 리스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .box {
+            border: 2px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #ddd;
+        }
+        .status-progress {
+            background-color: yellow;
+        }
+        .status-working {
+            background-color: red;
+            color: white;
+        }
+        .status-complete {
+            background-color: gray;
+            color: white;
+        }
+        .small-input {
+            width: 70px;
+        }
+
+        select option[disabled] {
+        color: gray;
+        }
+
+        .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 0;  
+        margin-bottom: 15px;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 5px;
+        color: #333;
+        }
+
+        .inline-group {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+        }
+
+        
+        .middle-input {
+            width: 80px;
+        }
+
+        .link-input {
+            width: 500px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Kakao IDC team 서버 이전 리스트</div>
+        
+        <div class="box">
+            <p class="section-title">작업 등록</p>
+            <div class="inline-group">
+                <label>서버 이전 종류: </label>  
+                <select id="migrationType" onchange="toggleCenterSelect()">
+                    <option disabled selected>작업 종류 선택</option>
+                    <option value="external">센터 간 이전</option>
+                    <option value="internal">내부 이전</option>
+                </select>
+            </div>
+            
+            <div id="centerSelectSection" class="inline-group" style="display: none;">
+                <label>센터 간 이전: </label>
+                <select id="fromCenter">
+                    <option disabled selected>출발 센터</option>
+                    <option>AY</option>
+                    <option>AS</option>
+                    <option>PG</option>
+                    <option>MD</option>
+                    <option>GS</option>
+                    <option>HN</option>
+                </select>
+                &nbsp;to&nbsp;
+                <select id="toCenter">
+                    <option disabled selected>도착 센터</option>
+                    <option>AY</option>
+                    <option>AS</option>
+                    <option>PG</option>
+                    <option>MD</option>
+                    <option>GS</option>
+                    <option>HN</option>
+                </select>
+            </div>
+            
+            <!-- 내부 이전일 경우 보여질 센터 선택 -->
+            <div id="internalCenterSection" class="inline-group" style="display: none;">
+                <label>작업 센터: </label>
+            <select id="internalCenter">
+                    <option disabled selected>센터 선택</option>
+                    <option>AY</option>
+                    <option>AS</option>
+                    <option>PG</option>
+                    <option>MD</option>
+                    <option>GS</option>
+                    <option>HN</option>
+                </select>
+            </div>
+
+            <br><br>
+            <label>벤더: </label> <select id="vendor">
+                <option disabled selected>벤더 선택</option>
+                <option value="kaytus">KAYTUS</option>
+                <option value="xfusion">XFUSION</option>
+                <option value="others">그 외</option>
+                <option value="mixed">복합</option>
+            </select> &nbsp;
+
+            <label>서버 수: </label><input id="serverCount" class="small-input" type="number" min="0" placeholder=" Ex)10"> &nbsp;
+            <label>요청자: </label><input id="requester" class="middle-input" type="text" placeholder=" EX) gnar"> &nbsp;
+            <br><br>
+            <label>희망 완료일: </label><input id="dueDate" type="date">
+            <br><br>
+            <label>파트 작업: <input id="partWork" type="checkbox"></label>
+            <label>OS 재설치: <input id="osInstall" type="checkbox"></label>
+            <br><br>
+            <label>비고: </label><textarea id="memo" rows="1" cols="50"></textarea>
+            <br><br>
+            <label>Agit Link: </label><input id="agitLink" class="link-input" type="text" placeholder="링크를 통하여 검색되니 정확히 입력부탁드립니다."> 
+            <button onclick="collectFormData()">SAVE</button>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>진행 상태</th>
+                        <th>희망 완료일</th>
+                        <th>현재 서버 위치</th>
+                        <th>작업 종류</th>
+                        <th>작업 내용</th>
+                        <th>서버 수</th>
+                        <th>요청자</th>
+                        <th>센터 이동 완료</th>
+                        <th>작업 파일</th>
+                        <th>마운트</th>
+                        <th>포설</th>
+                        <th>파트 작업</th>
+                        <th>OS 설치</th>
+                        <th>서버 설정</th>
+                        <th>파트 반납</th>
+                        <th>비고</th>
+                        <th>Agit link</th>
+                        <th>관리</th>
+                        
+                    </tr>
+                </thead>
+                
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleCenterSelect() {
+            const type = document.getElementById("migrationType").value;
+            const externalSection = document.getElementById("centerSelectSection");
+            const internalSection = document.getElementById("internalCenterSection");
+
+            if (type === "external") {
+                externalSection.style.display = "inline-block";
+                internalSection.style.display = "none";
+            } else if (type === "internal") {
+                internalSection.style.display = "inline-block";
+                externalSection.style.display = "none";
+            } else {
+                externalSection.style.display = "none";
+                internalSection.style.display = "none";
+            }
+        }
+
+    </script>
+
+
+<script>
+    async function collectFormData() {
+        const migrationType = document.getElementById("migrationType").value;
+        const vendor = document.getElementById("vendor").value;
+        const serverCount = document.getElementById("serverCount").value;
+        const requester = document.getElementById("requester").value;
+        const dueDate = document.getElementById("dueDate").value;
+        const partWork = document.getElementById("partWork").checked;
+        const reinstallOS = document.getElementById("osInstall").checked;
+        const memo = document.getElementById("memo").value;
+        const agitLink = document.getElementById("agitLink").value;
+
+        let center = "";
+
+        if (migrationType === "external") {
+            const fromCenter = document.getElementById("fromCenter").value;
+            const toCenter = document.getElementById("toCenter").value;
+            center = `${fromCenter} to ${toCenter}`;
+        } else if (migrationType === "internal") {
+            const internalCenter = document.getElementById("internalCenter").value;
+            center = `${internalCenter} to ${internalCenter}`;
+        }
+
+        const data = {
+            migrationType,
+            center,
+            vendor,
+            serverCount,
+            requester,
+            dueDate,
+            partWork,
+            reinstallOS,
+            memo,
+            agitLink,
+        };
+
+        console.log("💾 수집된 데이터:", data);
+
+        try {
+            const response = await fetch("/api/tasks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert("✅ 저장 완료!");
+                console.log("📦 서버 응답:", result);
+                fetchAndDisplayTasks(); // 저장 후 테이블 즉시 갱신
+
+            } else {
+                alert("❌ 저장 실패: " + result.error);
+            }
+        } catch (error) {
+            console.error("에러 발생:", error);
+            alert("⚠️ 네트워크 오류");
+        }
+        return data;
+}
+
+</script>
+
+<script>
+    async function fetchAndDisplayTasks() {
+    try {
+        const res = await fetch("/api/tasks");
+        const tasks = await res.json();
+
+        const table = document.querySelector("table");
+        let tableBody = table.querySelector("tbody");
+
+        // tbody가 없으면 생성해서 붙이기
+        if (!tableBody) {
+            tableBody = document.createElement("tbody");
+            table.appendChild(tableBody);
+        }
+
+        tableBody.innerHTML = ""; // 기존 행 제거
+
+        tasks.forEach(task => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>진행 전</td>
+                <td>${task.dueDate || "-"}</td>
+                <td>${task.center}</td>
+                <td>${task.migrationType === "external" ? "센터 간 이전" : "내부 이전"}</td>
+                <td>-</td>
+                <td>${task.serverCount}</td>
+                <td>${task.requester}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>${task.partWork ? "✅" : ""}</td>
+                <td>${task.reinstallOS ? "✅" : ""}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>${task.memo || ""}</td>
+                <td><a href="${task.agitLink}" target="_blank">${task.agitLink}</a></td>
+                <td>
+                    <button onclick="editTask('${task._id}')">✏️</button>
+                    <button onclick="deleteTask('${task._id}')">🗑️</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+    } catch (err) {
+        console.error("❌ 작업 목록 불러오기 실패:", err);
+    }
+}
+
+
+    // 수정 - 간단 예: 입력 폼에 기존 값 채우기
+async function editTask(id) {
+    try {
+        const res = await fetch(`/api/tasks`);
+        const data = await res.json();
+        const task = data.find(t => t._id === id);
+
+        if (!task) return alert("작업을 찾을 수 없습니다.");
+
+        // 입력 폼에 값 채워넣기
+        document.getElementById("migrationType").value = task.migrationType;
+        toggleCenterSelect(); // 선택 박스 노출
+        if (task.migrationType === "external") {
+            const [from, to] = task.center.split(" to ");
+            document.getElementById("fromCenter").value = from;
+            document.getElementById("toCenter").value = to;
+        } else {
+            const [center] = task.center.split(" to ");
+            document.getElementById("internalCenter").value = center;
+        }
+
+        document.getElementById("vendor").value = task.vendor;
+        document.getElementById("serverCount").value = task.serverCount;
+        document.getElementById("requester").value = task.requester;
+        document.getElementById("dueDate").value = task.dueDate;
+        document.getElementById("partWork").checked = task.partWork;
+        document.getElementById("osInstall").checked = task.reinstallOS;
+        document.getElementById("memo").value = task.memo;
+        document.getElementById("agitLink").value = task.agitLink;
+
+        // 저장 버튼을 수정 모드로 변경
+        const saveBtn = document.querySelector("button[onclick='collectFormData()']");
+        saveBtn.textContent = "UPDATE";
+        saveBtn.onclick = () => updateTask(id);
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ 수정 모드 진입 실패");
+    }
+}
+
+async function updateTask(id) {
+    const data = collectFormData(); // 기존 collectFormData 내용을 함수로 분리했다면!
+
+    try {
+        const res = await fetch(`/api/tasks/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        alert("✅ 수정 완료");
+        fetchAndDisplayTasks();
+
+        // 저장 버튼 원상복구
+        const saveBtn = document.querySelector("button[onclick]");
+        saveBtn.textContent = "SAVE";
+        saveBtn.onclick = collectFormData;
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ 수정 실패");
+    }
+}
+
+
+    // 페이지 로드 시 자동 실행
+    window.onload = fetchAndDisplayTasks;
+    </script>
+    
+
+    
+        
+</body>
+</html>
