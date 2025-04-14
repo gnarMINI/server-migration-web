@@ -117,6 +117,16 @@
             background-color: black;
             color: white;
         }
+        .urgent-1week {
+            background-color: #ffe5e5 !important;
+        }
+        .urgent-2week {
+            background-color: #fff7d9 !important;
+        }
+        .urgent-3week {
+            background-color: #ecf9ff !important;
+        }
+
 
 
     </style>
@@ -232,8 +242,8 @@
             const serverCount = document.getElementById("serverCount").value;
             const requester = document.getElementById("requester").value;
             const dueDate = document.getElementById("dueDate").value;
-            const partWork = document.getElementById("partWork").checked;
-            const reinstallOS = document.getElementById("osInstall").checked;
+            const partWork = document.getElementById("partWork").checked ? "unchecked" : "✖";
+            const reinstallOS = document.getElementById("osInstall").checked ? "unchecked" : "✖";
             const memo = document.getElementById("memo").value;
             const agitLink = document.getElementById("agitLink").value;
             const centerMoved = false;
@@ -301,6 +311,7 @@
                 });
                 const result = await res.json();
                 alert("✅ 수정 완료");
+                resetForm();
                 fetchAndDisplayTasks();
                 const btn = document.getElementById("saveTaskButton");
                 btn.textContent = "SAVE";
@@ -369,6 +380,20 @@
                     else if (statusLabel === "완료") statusClass = "status-complete";
                     else statusClass = "status-default"; // 진행전
 
+                    if (task.dueDate) {
+                        const dueDate = new Date(task.dueDate);
+                        const now = new Date();
+                        const diffDays = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
+
+                        if (diffDays <= 7) {
+                            row.classList.add("urgent-1week"); // 빨강
+                        } else if (diffDays <= 14) {
+                            row.classList.add("urgent-2week"); // 노랑
+                        } else if (diffDays <= 21) {
+                            row.classList.add("urgent-3week"); // 하늘
+                        }
+                    }
+
                     row.innerHTML = `
                         <td>
                             <button 
@@ -394,8 +419,8 @@
                         <td>${renderCheckbox(task.workFile, task._id, 'workFile')}</td>
                         <td>${renderCheckbox(task.mount, task._id, 'mount')}</td>
                         <td>${renderCheckbox(task.cabling, task._id, 'cabling')}</td>
-                        <td>${task.partWork ? renderCheckbox(task.partWork, task._id, 'partWork') : "✖"}</td>
-                        <td>${task.reinstallOS ? renderCheckbox(task.reinstallOS, task._id, 'reinstallOS') : "✖"}</td>
+                        <td>${renderCustomCheckbox(task._id, 'partWork', task.partWork)}</td>
+                        <td>${renderCustomCheckbox(task._id, 'reinstallOS', task.reinstallOS)}</td>
                         <td>${renderCheckbox(task.serverConfig, task._id, 'serverConfig')}</td>
                         <td>${renderCheckbox(task.partReturn, task._id, 'partReturn')}</td>
                         <td>${task.memo || ""}</td>
@@ -568,17 +593,6 @@
                 return false;
             }
 
-
-            if (!serverCount || serverCount <= 0) {
-                alert("서버 수를 입력해주세요.");
-                return false;
-            }
-
-            if (!requester) {
-                alert("작업 요청자를 입력해주세요.");
-                return false;
-            }
-
             // 외부 이전일 경우 센터 모두 선택했는지 확인
             if (migrationType === "external") {
                 if (
@@ -598,7 +612,48 @@
                 }
             }
 
+            if (!serverCount || serverCount <= 0) {
+                alert("서버 수를 입력해주세요.");
+                return false;
+            }
+
+            if (!requester) {
+                alert("작업 요청자를 입력해주세요.");
+                return false;
+            }
+
+
+
             return true; // 검증 통과
+        }
+
+        function renderCustomCheckbox(id, field, value) {
+            if (value === "✖") return "✖";
+
+            const isChecked = value === "checked" ? "checked" : "";
+            return `<input type="checkbox" ${isChecked} onclick="toggleCustomCheckbox(this, '${id}', '${field}')" />`;
+        }
+
+        function toggleCustomCheckbox(checkbox, id, field) {
+            const newValue = checkbox.checked ? "checked" : "unchecked";
+
+            fetch(`/api/tasks/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ [field]: newValue })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (!result || !result.success) {
+                    alert("❌ 상태 반영 실패");
+                    checkbox.checked = !checkbox.checked; // 롤백
+                }
+            })
+            .catch(err => {
+                console.error("체크박스 반영 오류:", err);
+                alert("⚠️ 서버 오류");
+                checkbox.checked = !checkbox.checked;
+            });
         }
 
 

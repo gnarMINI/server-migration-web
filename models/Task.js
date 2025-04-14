@@ -31,13 +31,15 @@ const taskSchema = new mongoose.Schema({
         type: String
     },
     partWork: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum: ['unchecked', 'checked', '✖'],
+        default: '✖'
     },
     reinstallOS: {
-        type: Boolean,
-        default: false
-    },
+        type: String,
+        enum: ['unchecked', 'checked', '✖'],
+        default: '✖'
+    },    
     memo: {
         type: String
     },

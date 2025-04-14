@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start-db": "mongod --config /Users/gnar/Desktop/work/Project/server-web/server-migration-web/my-migration-db/mongod.conf",
+    "start-db-idc": "mongod --config /Users/gnar/Desktop/work/Project/server-web/server-migration-web/my-migration-db/mongod.conf",
+    "start-db-home": "mongod --config /Users/Wook/server-migration-backend/my-migration-db/mongod.conf",
     "start-db-bg": "mongod --config ~/Desktop/work/Project/server-web/server-migration-web/my-migration-db/mongod.conf --fork --logpath ~Desktop/work/Project/server-web/server-migration-web/my-migration-db/mongod.log",
     "start-server": "node server.js",
     "dev-server": "nodemon server.js",
-    "dev": "npm run start-db & sleep 2 && npm run dev-server",
+    "dev-idc": "npm run start-db-idc & sleep 2 && npm run dev-server",
+    "dev-home": "npm run start-db-home & sleep 2 && npm run dev-server",
     "stop-db": "pkill -f mongod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
