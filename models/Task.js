@@ -74,6 +74,10 @@ const taskSchema = new mongoose.Schema({
     partReturn: {
         type: Boolean,
         default: false
+    },
+    unmount: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

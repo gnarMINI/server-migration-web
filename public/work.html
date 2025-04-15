@@ -22,12 +22,16 @@
             margin-bottom: 10px;
         }
         .box {
+            display: inline-block;      
+            width: fit-content;         
+            max-width: 100%;            
             border: 2px solid #ccc;
             padding: 15px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin: 0 auto 20px auto;
             background: #fff;
         }
+
         .table-container {
             overflow-x: auto;
         }
@@ -126,7 +130,46 @@
         .urgent-3week {
             background-color: #ecf9ff !important;
         }
+        .completed-row { 
+            background-color: #e0e0e0 !important; 
+        }
+        .pagination-btn {
+            margin: 0 3px;
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+        .pagination-btn.active {
+            font-weight: bold;
+            background: #ddd;
+        }
+        #centerFilter button {
+            padding: 5px 12px;
+            margin-right: 6px;
+            border: 1px solid #ccc;
+            background: #f4f4f4;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #centerFilter button:hover {
+            background: #ddd;
+        }
+        .filter-btn {
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        background: #f0f0f0;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-right: 6px;
+        }
 
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+            border-color: #007bff;
+        }
 
 
     </style>
@@ -134,6 +177,19 @@
 <body>
     <div class="container">
         <div class="header">Kakao IDC team 서버 이전 리스트</div>
+        <!-- 센터 필터 버튼 -->
+        <div style="margin-bottom: 10px;">
+            <span><strong>센터:</strong></span>
+            <button class="filter-btn" onclick="setCenterFilter('ALL')">ALL</button>
+            <button class="filter-btn" onclick="setCenterFilter('AS')">AS</button>
+            <button class="filter-btn" onclick="setCenterFilter('AY')">AY</button>
+            <button class="filter-btn" onclick="setCenterFilter('PG')">PG</button>
+            <button class="filter-btn" onclick="setCenterFilter('MD')">MD</button>
+            <button class="filter-btn" onclick="setCenterFilter('GS')">GS</button>
+            <button class="filter-btn" onclick="setCenterFilter('HN')">HN</button>
+        </div>
+  
+        <div class="container" ;>
         <div class="box">
             <p class="section-title">작업 등록</p>
             <div class="inline-group">
@@ -148,8 +204,8 @@
                 <label>센터 간 이전: </label>
                 <select id="fromCenter">
                     <option value="" disabled selected>출발 센터</option>
-                    <option>AY</option>
                     <option>AS</option>
+                    <option>AY</option>
                     <option>PG</option>
                     <option>MD</option>
                     <option>GS</option>
@@ -158,8 +214,8 @@
                 &nbsp;to&nbsp;
                 <select id="toCenter">
                     <option value="" disabled selected>도착 센터</option>
-                    <option>AY</option>
                     <option>AS</option>
+                    <option>AY</option>
                     <option>PG</option>
                     <option>MD</option>
                     <option>GS</option>
@@ -170,8 +226,8 @@
                 <label>작업 센터: </label>
                 <select id="internalCenter">
                     <option value="" disabled selected>센터 선택</option>
-                    <option>AY</option>
                     <option>AS</option>
+                    <option>AY</option>
                     <option>PG</option>
                     <option>MD</option>
                     <option>GS</option>
@@ -188,11 +244,9 @@
             </select> &nbsp;
             <label>서버 수: </label><input id="serverCount" class="small-input" type="number" min="0" placeholder=" Ex)10"> &nbsp;
             <label>요청자: </label><input id="requester" class="middle-input" type="text" placeholder=" EX) gnar"> &nbsp;
-            <br><br>
-            <label>희망 완료일: </label><input id="dueDate" type="date">
-            <br><br>
-            <label>파트 작업: <input id="partWork" type="checkbox"></label>
-            <label>OS 재설치: <input id="osInstall" type="checkbox"></label>
+            <label>희망 완료일: </label><input id="dueDate" type="date"> &nbsp;
+            <label>파트 작업 여부: <input id="partWork" type="checkbox"></label>
+            <label>OS 재설치 여부: <input id="osInstall" type="checkbox"></label>
             <br><br>
             <label>비고: </label><textarea id="memo" rows="1" cols="50"></textarea>
             <br><br>
@@ -200,19 +254,53 @@
             <button id="saveTaskButton" onclick="saveTask()">SAVE</button>
             <button id="resetBtn" onclick="resetForm()">초기화</button>
             <button id="cancelBtn" onclick="cancelEdit()" style="display: none;">취소</button>
+            
+            <!-- 숨겨진 일반 체크박스 필드들 (수정용 상태 보존용) -->
+            <input type="checkbox" id="centerMoved" style="display:none;">
+            <input type="checkbox" id="workFile" style="display:none;">
+            <input type="checkbox" id="mount" style="display:none;">
+            <input type="checkbox" id="cabling" style="display:none;">
+            <input type="checkbox" id="serverConfig" style="display:none;">
+            <input type="checkbox" id="partReturn" style="display:none;">
+            <input type="checkbox" id="unmount" style="display:none;">
 
         </div>
+    </div>
+
+        <div style="margin-bottom: 10px;">
+            <span><strong>진행 상태:</strong></span>
+            <button class="filter-btn" onclick="setStatusFilter('ALL')">ALL</button>
+            <button class="filter-btn" onclick="setStatusFilter('진행전')">진행전</button>
+            <button class="filter-btn" onclick="setStatusFilter('작업중')">작업중</button>
+            <button class="filter-btn" onclick="setStatusFilter('완료')">완료</button>
+        </div>
+          
+        <div style="margin-bottom: 10px;">
+            🔍 <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="요청자 또는 Agit 링크로 검색" 
+                oninput="handleSearch()"
+                style="padding: 6px 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px;"
+            >
+        </div>
+
+        <div id="statusSummary" style="margin: 10px 0; font-weight: bold;"></div>
+
+
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>진행 상태</th>                       
                         <th>희망 완료일</th>
-                        <th>현재 서버 위치</th>
+                        <th>현재 위치</th>
                         <th>작업 종류</th>
                         <th>작업 내용</th>
                         <th>서버 수</th>
+                        <th>벤더</th>
                         <th>요청자</th>
+                        <th>unmount</th>
                         <th>센터 이동 완료</th>
                         <th>작업 파일</th>
                         <th>마운트</th>
@@ -229,56 +317,320 @@
             </table>
         </div>
     </div>
+    <div id="pagination" style="margin-top: 20px; text-align: center;"></div>
+    </div>
+
+
     <script>
-        function toggleCenterSelect() {
-            const type = document.getElementById("migrationType").value;
-            document.getElementById("centerSelectSection").style.display = (type === "external") ? "inline-block" : "none";
-            document.getElementById("internalCenterSection").style.display = (type === "internal") ? "inline-block" : "none";
+        ////////////////////////////
+        // 전역 상태 & onload
+        ////////////////////////////
+        let allTasks = [];
+        let currentPage = 1;
+        const itemsPerPage = 20;  // 페이지당 표시할 작업 수 (원하는 값으로 조절)
+        let selectedCenter = "ALL";  // 선택된 센터 필터 (기본은 전체 보기)
+        let selectedStatus = "ALL";
+
+        
+        window.onload = fetchAndDisplayTasks; // 페이지 로드 시 목록 불러오기
+        
+        ////////////////////////////
+        // 1. 목록 불러오기 + 검색
+        ////////////////////////////
+        function fetchAndDisplayTasks() {
+            fetch("/api/tasks")
+                .then(res => res.json())
+                .then(tasks => {
+                    allTasks = tasks;
+                    currentPage = 1; // 목록 새로 불러올 때 페이지 1로
+                    updateDisplayedTasks(); // 페이지네이션 + 검색어 반영
+                })
+                .catch(err => {
+                    console.error("❌ 작업 목록 불러오기 실패:", err);
+                });
         }
+        
+        // 검색 핸들러
+        function handleSearch() {
+            currentPage = 1;  // 검색 시 페이지 1부터
+            updateDisplayedTasks();
+        }
+        
+        // 검색 + 페이지네이션 반영하여 최종 목록 표시
+        function updateDisplayedTasks() {
+            const query = document.getElementById("searchInput").value.trim().toLowerCase();
+        
+            // 1) 검색 & 필터
+            const filtered = allTasks.filter(task => {
+                const requester = task.requester?.toLowerCase() || "";
+                const link = task.agitLink?.toLowerCase() || "";
+                const matchesSearch = requester.includes(query) || link.includes(query);
+                const matchesCenter = selectedCenter === "ALL" || task.currentLocation === selectedCenter;
+                const matchesStatus = selectedStatus === "ALL" || task.status === selectedStatus;
+                return matchesSearch && matchesCenter && matchesStatus;
+            });
 
-        function collectFormData() {
-            const migrationType = document.getElementById("migrationType").value;
-            const vendor = document.getElementById("vendor").value;
-            const serverCount = document.getElementById("serverCount").value;
-            const requester = document.getElementById("requester").value;
-            const dueDate = document.getElementById("dueDate").value;
-            const partWork = document.getElementById("partWork").checked ? "unchecked" : "✖";
-            const reinstallOS = document.getElementById("osInstall").checked ? "unchecked" : "✖";
-            const memo = document.getElementById("memo").value;
-            const agitLink = document.getElementById("agitLink").value;
-            const centerMoved = false;
-            const workFile = false;
-            const mount = false;
-            const cabling = false;
-            const serverConfig = false;
-            const partReturn = false;
-
-            let center = "";
-            let currentLocation = "";
-
-            if (migrationType === "external") {
-                const from = document.getElementById("fromCenter").value;
-                const to = document.getElementById("toCenter").value;
-                center = `${from} → ${to}`;
-                currentLocation = from; // ✅ 최초는 fromCenter
-            } else if (migrationType === "internal") {
-                const internal = document.getElementById("internalCenter").value;
-                center = `${internal} → ${internal}`;
-                currentLocation = internal; // ✅ 내부 이전이면 하나
-            }
-
-            return {
-                migrationType, center, currentLocation, vendor, serverCount, requester, dueDate,
-                partWork, reinstallOS, memo, agitLink,
-                centerMoved, workFile, mount, cabling, serverConfig, partReturn
+            // 3) 통계 요약 표시
+            renderStatusSummary(filtered); 
+        
+            // 4) 페이지네이션: currentPage, itemsPerPage 기준
+            const start = (currentPage - 1) * itemsPerPage;
+            const pageItems = filtered.slice(start, start + itemsPerPage);
+        
+            // 5) 테이블 렌더
+            renderTableRows(pageItems);
+        
+            // 6) 페이지네이션 버튼 렌더
+            renderPagination(filtered.length);
+        }
+        
+        ////////////////////////////
+        // 2. 페이지네이션
+        ////////////////////////////
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const container = document.getElementById("pagination");
+            container.innerHTML = "";
+        
+            // 페이지가 1개 이하라면 버튼 표시 안 함
+            if (totalPages <= 1) return;
+        
+            // 버튼 생성
+            const makeBtn = (label, page) => {
+                const btn = document.createElement("button");
+                btn.textContent = label;
+                btn.className = "pagination-btn";
+                if (page === currentPage) btn.classList.add("active");
+                btn.onclick = () => {
+                    currentPage = page;
+                    updateDisplayedTasks();
+                };
+                return btn;
             };
+        
+            // 이전버튼
+            if (currentPage > 1) {
+                container.appendChild(makeBtn("<", currentPage - 1));
+            }
+        
+            // 숫자 버튼
+            for (let i = 1; i <= totalPages; i++) {
+                container.appendChild(makeBtn(i, i));
+            }
+        
+            // 다음버튼
+            if (currentPage < totalPages) {
+                container.appendChild(makeBtn(">", currentPage + 1));
+            }
+        }
+        
+        ////////////////////////////
+        // 3. 테이블 렌더링 
+        ////////////////////////////
+        function renderTableRows(taskArray) {
+            const table = document.querySelector("table");
+            let tableBody = table.querySelector("tbody");
+        
+            // tbody가 없으면 생성
+            if (!tableBody) {
+                tableBody = document.createElement("tbody");
+                table.appendChild(tableBody);
+            }
+            tableBody.innerHTML = "";
+        
+            // 각 task마다 행 생성
+            taskArray.forEach(task => {
+                const row = document.createElement("tr");
+        
+                // 상태 표시
+                const statusLabel = task.status || "진행전";
+                let statusClass = "status-default";
+                if (statusLabel === "작업중")      statusClass = "status-working";
+                else if (statusLabel === "완료")   statusClass = "status-complete";
+        
+                // 날짜 D-day 하이라이트
+                if (statusLabel === "완료") {
+                    row.classList.add("completed-row");
+                } else if (task.dueDate) {
+                    const diffDays = Math.floor((new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                    if (diffDays <= 7)        row.classList.add("urgent-1week");
+                    else if (diffDays <= 14)  row.classList.add("urgent-2week");
+                    else if (diffDays <= 21)  row.classList.add("urgent-3week");
+                }
+        
+                // 실제 행 HTML
+                row.innerHTML = `
+                    <td>
+                        <button 
+                            onclick="toggleStatus('${task._id}', '${statusLabel}')" 
+                            class="status-btn ${statusClass}" 
+                            title="클릭하여 상태 변경">
+                            ${statusLabel}
+                        </button>
+                    </td>
+                    <td>${task.dueDate || "-"}</td>
+                    <td>
+                        <button 
+                            onclick="toggleLocation('${task._id}', '${task.currentLocation}', '${task.center}', '${task.migrationType}')"
+                            title="클릭하여 위치 변경">
+                            ${task.currentLocation}
+                        </button>
+                    </td>
+                    <td>${task.migrationType === "external" ? "센터 간 이전" : "내부 이전"}</td>
+                    <td>${task.center}</td>
+                    <td>${task.serverCount}</td>
+                    <td>${task.vendor}</td>
+                    <td>${task.requester}</td>
+                    <td>${renderCheckbox(task.unmount, task._id, 'unmount')}</td>
+                    <td>${renderCheckbox(task.centerMoved, task._id, 'centerMoved')}</td>
+                    <td>${renderCheckbox(task.workFile, task._id, 'workFile')}</td>
+                    <td>${renderCheckbox(task.mount, task._id, 'mount')}</td>
+                    <td>${renderCheckbox(task.cabling, task._id, 'cabling')}</td>
+                    <td>${renderCustomCheckbox(task._id, 'partWork', task.partWork)}</td>
+                    <td>${renderCustomCheckbox(task._id, 'reinstallOS', task.reinstallOS)}</td>
+                    <td>${renderCheckbox(task.serverConfig, task._id, 'serverConfig')}</td>
+                    <td>${renderCheckbox(task.partReturn, task._id, 'partReturn')}</td>
+                    <td>${task.memo || ""}</td>
+                    <td><a href="${task.agitLink}" target="_blank">${task.agitLink}</a></td>
+                    <td>
+                        <button onclick="editTask('${task._id}')">✏️</button>
+                        <button onclick="deleteTask('${task._id}')">🗑️</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        ////////////////////////////
+        // 4. 체크박스 (true/false)
+        ////////////////////////////
+        function renderCheckbox(checked, id, field) {
+            return `<input type="checkbox" ${checked ? "checked" : ""} 
+                           onclick="toggleCheckbox(this, '${id}', '${field}')"/>`;
+        }
+        
+        function toggleCheckbox(checkbox, id, field) {
+            const checked = checkbox.checked;
+            fetch(`/api/tasks/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ [field]: checked })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (!result?.success) {
+                    alert("❌ 상태 업데이트 실패");
+                    checkbox.checked = !checked;
+                }
+            })
+            .catch(err => {
+                alert("⚠️ 서버 오류");
+                checkbox.checked = !checked;
+            });
+        }
+        
+        ////////////////////////////
+        // 5. 커스텀 체크박스 (✖ / checked / unchecked)
+        ////////////////////////////
+        function renderCustomCheckbox(id, field, value) {
+            if (value === "✖") return "✖";
+            const isChecked = value === "checked" ? "checked" : "";
+            return `<input type="checkbox" ${isChecked} 
+                           onclick="toggleCustomCheckbox(this, '${id}', '${field}')"/>`;
+        }
+        
+        function toggleCustomCheckbox(checkbox, id, field) {
+            const newValue = checkbox.checked ? "checked" : "unchecked";
+            fetch(`/api/tasks/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ [field]: newValue })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (!result?.success) {
+                    alert("❌ 상태 반영 실패");
+                    checkbox.checked = !checkbox.checked;
+                }
+            })
+            .catch(err => {
+                alert("⚠️ 서버 오류");
+                checkbox.checked = !checkbox.checked;
+            });
+        }
+        
+        ////////////////////////////
+        // 6. 상태 변경 (진행전 → 작업중 → 완료)
+        ////////////////////////////
+        function toggleStatus(id, currentStatus) {
+            const nextStatus =
+                currentStatus === "진행전" ? "작업중" :
+                currentStatus === "작업중" ? "완료" : "진행전";
 
+            fetch(`/api/tasks/${id}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: nextStatus })
+            })
+            .then(async res => {
+                const result = await res.json();
+                if (res.ok) {
+                    // 👉 allTasks에서 해당 항목 찾아 상태만 바로 바꾸기
+                    const target = allTasks.find(t => t._id === id);
+                    if (target) target.status = nextStatus;
+                    updateDisplayedTasks();
+                } else {
+                    alert("❌ 상태 업데이트 실패: " + (result.error || "서버 오류"));
+                }
+            })
+            .catch(err => {
+                console.error("상태 변경 오류:", err);
+                alert("⚠️ 상태 변경 중 오류 발생");
+            });
         }
 
+
+        
+        ////////////////////////////
+        // 7. 위치 토글 (from↔to)
+        ////////////////////////////
+        function toggleLocation(id, currentLocation, center, migrationType) {
+            if (migrationType === "internal") return;
+
+            const [from, to] = center.split(" → ");
+            const newLocation = currentLocation === from ? to : from;
+
+            fetch(`/api/tasks/${id}/location`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentLocation: newLocation })
+            })
+            .then(async res => {
+                const result = await res.json();
+                if (res.ok) {
+                    // 👉 allTasks에서 해당 항목 찾아 위치만 바꾸기
+                    const target = allTasks.find(t => t._id === id);
+                    if (target) target.currentLocation = newLocation;
+                    updateDisplayedTasks();
+                } else {
+                    alert("❌ 위치 업데이트 실패: " + (result.error || "서버 오류"));
+                }
+            })
+            .catch(err => {
+                console.error("위치 변경 오류:", err);
+                alert("⚠️ 위치 변경 중 오류");
+            });
+        }
+
+
+        
+        ////////////////////////////
+        // 8. 등록/수정/삭제
+        ////////////////////////////
         async function saveTask() {
             if (!validateForm()) return;
-
             const data = collectFormData();
+        
             try {
                 const res = await fetch("/api/tasks", {
                     method: "POST",
@@ -289,7 +641,7 @@
                 if (res.ok) {
                     alert("✅ 저장 완료!");
                     resetForm();
-                    fetchAndDisplayTasks();
+                    await fetchAndDisplayTasks(); // 새 목록 반영
                 } else {
                     alert("❌ 저장 실패: " + result.error);
                 }
@@ -298,21 +650,23 @@
                 alert("⚠️ 네트워크 오류");
             }
         }
-
+        
         async function updateTask(id) {
             if (!validateForm()) return;
 
-            const data = collectFormData();
+            const existingTask = allTasks.find(t => t._id === id); // 기존 값 찾기
+            const data = collectFormData(existingTask); // 기존값 전달
+
             try {
                 const res = await fetch(`/api/tasks/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
-                const result = await res.json();
+                await res.json();
                 alert("✅ 수정 완료");
                 resetForm();
-                fetchAndDisplayTasks();
+                await fetchAndDisplayTasks();
                 const btn = document.getElementById("saveTaskButton");
                 btn.textContent = "SAVE";
                 btn.onclick = saveTask;
@@ -320,151 +674,189 @@
                 console.error(err);
                 alert("❌ 수정 실패");
             }
-            
-
         }
 
+
+        
+        async function deleteTask(id) {
+            const confirmDelete = confirm("정말 삭제하시겠습니까?");
+            if (!confirmDelete) return;
+        
+            try {
+                const res = await fetch(`/api/tasks/${id}`, {
+                    method: "DELETE"
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    alert("🗑️ 삭제 완료!");
+                    await fetchAndDisplayTasks();
+                } else {
+                    alert("❌ 삭제 실패: " + result.error);
+                }
+            } catch (err) {
+                console.error("삭제 오류:", err);
+                alert("⚠️ 서버 오류로 삭제 실패");
+            }
+        }
+        
+        ////////////////////////////
+        // 9. 수정 모드 (editTask)
+        ////////////////////////////
         async function editTask(id) {
             try {
                 const res = await fetch(`/api/tasks`);
                 const data = await res.json();
                 const task = data.find(t => t._id === id);
                 if (!task) return alert("작업을 찾을 수 없습니다.");
+        
                 document.getElementById("migrationType").value = task.migrationType;
                 toggleCenterSelect();
+        
                 if (task.migrationType === "external") {
                     const [from, to] = task.center.split(" → ");
                     document.getElementById("fromCenter").value = from;
                     document.getElementById("toCenter").value = to;
                 } else {
-                    const [center] = task.center.split(" → ");
-                    document.getElementById("internalCenter").value = center;
+                    const [c] = task.center.split(" → ");
+                    document.getElementById("internalCenter").value = c;
                 }
+        
                 document.getElementById("vendor").value = task.vendor;
                 document.getElementById("serverCount").value = task.serverCount;
                 document.getElementById("requester").value = task.requester;
                 document.getElementById("dueDate").value = task.dueDate;
-                document.getElementById("partWork").checked = task.partWork;
-                document.getElementById("osInstall").checked = task.reinstallOS;
+                document.getElementById("partWork").checked = !(task.partWork === "✖");
+                document.getElementById("osInstall").checked = !(task.reinstallOS === "✖");
                 document.getElementById("memo").value = task.memo;
                 document.getElementById("agitLink").value = task.agitLink;
-                const btn = document.getElementById("saveTaskButton");
-                btn.textContent = "UPDATE";
-                btn.onclick = () => updateTask(id);
+                // 일반 체크박스 필드들 반영
+                document.getElementById("centerMoved").checked    = task.centerMoved;
+                document.getElementById("workFile").checked       = task.workFile;
+                document.getElementById("mount").checked          = task.mount;
+                document.getElementById("cabling").checked        = task.cabling;
+                document.getElementById("serverConfig").checked   = task.serverConfig;
+                document.getElementById("partReturn").checked     = task.partReturn;
+                document.getElementById("unmount").checked        = task.unmount;
+                // 저장 버튼을 UPDATE 모드로 전환
+                const saveBtn = document.getElementById("saveTaskButton");
+                saveBtn.textContent = "UPDATE";
+                saveBtn.onclick = () => updateTask(id);
+        
                 document.getElementById("cancelBtn").style.display = "inline-block";
-                document.getElementById("resetBtn").style.display = "none"; // 초기화 숨김
+                document.getElementById("resetBtn").style.display = "none";
             } catch (err) {
                 console.error(err);
                 alert("❌ 수정 모드 진입 실패");
             }
         }
-
-        async function fetchAndDisplayTasks() {
-            try {
-                const res = await fetch("/api/tasks");
-                const tasks = await res.json();
-                const table = document.querySelector("table");
-                let tableBody = table.querySelector("tbody");
-                if (!tableBody) {
-                    tableBody = document.createElement("tbody");
-                    table.appendChild(tableBody);
-                }
-                tableBody.innerHTML = "";
-
-                tasks.forEach(task => {
-                    const row = document.createElement("tr");
-                    const statusLabel = task.status || "진행전";
-
-                    let statusClass = "";
-                    if (statusLabel === "작업중") statusClass = "status-working";
-                    else if (statusLabel === "완료") statusClass = "status-complete";
-                    else statusClass = "status-default"; // 진행전
-
-                    if (task.dueDate) {
-                        const dueDate = new Date(task.dueDate);
-                        const now = new Date();
-                        const diffDays = Math.floor((dueDate - now) / (1000 * 60 * 60 * 24));
-
-                        if (diffDays <= 7) {
-                            row.classList.add("urgent-1week"); // 빨강
-                        } else if (diffDays <= 14) {
-                            row.classList.add("urgent-2week"); // 노랑
-                        } else if (diffDays <= 21) {
-                            row.classList.add("urgent-3week"); // 하늘
-                        }
-                    }
-
-                    row.innerHTML = `
-                        <td>
-                            <button 
-                                onclick="toggleStatus('${task._id}', '${statusLabel}')" 
-                                class="status-btn ${statusClass}" 
-                                title="클릭하여 상태 변경">
-                                ${statusLabel}
-                            </button>
-                        </td>
-                        <td>${task.dueDate || "-"}</td>
-                        <td>
-                            <button 
-                                onclick="toggleLocation('${task._id}', '${task.currentLocation}', '${task.center}', '${task.migrationType}')"
-                                title="클릭하여 위치 변경">
-                                ${task.currentLocation}
-                            </button>
-                        </td>
-                        <td>${task.migrationType === "external" ? "센터 간 이전" : "내부 이전"}</td>
-                        <td>${task.center}</td>
-                        <td>${task.serverCount}</td>
-                        <td>${task.requester}</td>
-                        <td>${renderCheckbox(task.centerMoved, task._id, 'centerMoved')}</td>
-                        <td>${renderCheckbox(task.workFile, task._id, 'workFile')}</td>
-                        <td>${renderCheckbox(task.mount, task._id, 'mount')}</td>
-                        <td>${renderCheckbox(task.cabling, task._id, 'cabling')}</td>
-                        <td>${renderCustomCheckbox(task._id, 'partWork', task.partWork)}</td>
-                        <td>${renderCustomCheckbox(task._id, 'reinstallOS', task.reinstallOS)}</td>
-                        <td>${renderCheckbox(task.serverConfig, task._id, 'serverConfig')}</td>
-                        <td>${renderCheckbox(task.partReturn, task._id, 'partReturn')}</td>
-                        <td>${task.memo || ""}</td>
-                        <td><a href="${task.agitLink}" target="_blank">${task.agitLink}</a></td>
-                        <td>
-                            <button onclick="editTask('${task._id}')">✏️</button>
-                            <button onclick="deleteTask('${task._id}')">🗑️</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } 
-            
-            catch (err) {
-                console.error("❌ 작업 목록 불러오기 실패:", err);
-            }
+        
+        function cancelEdit() {
+            resetForm();
+            document.getElementById("cancelBtn").style.display = "none";
         }
+        
+        ////////////////////////////
+        // 10. 폼 & 유효성 검사
+        ////////////////////////////
+        function collectFormData(existingTask = null) {
+            const migrationType = document.getElementById("migrationType").value;
+            const vendor = document.getElementById("vendor").value;
+            const serverCount = document.getElementById("serverCount").value;
+            const requester = document.getElementById("requester").value;
+            const dueDate = document.getElementById("dueDate").value;
+            const memo = document.getElementById("memo").value;
+            const agitLink = document.getElementById("agitLink").value;
 
-        async function toggleLocation(id, currentLocation, center, migrationType) {
-            if (migrationType === "internal") return;
+            // 사용자 정의 체크박스
+            const partWorkChecked = document.getElementById("partWork").checked;
+            const osInstallChecked = document.getElementById("osInstall").checked;
 
-            const [from, to] = center.split(" → ");
-            const newLocation = (currentLocation === from) ? to : from;
+            let partWork = partWorkChecked ? "unchecked" : "✖";
+            let reinstallOS = osInstallChecked ? "unchecked" : "✖";
 
-            try {
-                const res = await fetch(`/api/tasks/${id}/location`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ currentLocation: newLocation })
-                });
-                const result = await res.json();
-                if (res.ok) {
-                    fetchAndDisplayTasks();
-                } else {
-                    alert("❌ 위치 변경 실패");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("⚠️ 위치 변경 중 오류");
+            // 수정 모드에서는 기존 값이 ✖이면 유지
+            if (existingTask) {
+                if (existingTask.partWork === "✖") partWork = "✖";
+                if (existingTask.reinstallOS === "✖") reinstallOS = "✖";
             }
+
+            // 일반 체크박스 필드들 - DOM에서 직접 읽기 
+            let centerMoved    = document.getElementById("centerMoved").checked;
+            let workFile       = document.getElementById("workFile").checked;
+            let mount          = document.getElementById("mount").checked;
+            let cabling        = document.getElementById("cabling").checked;
+            let serverConfig   = document.getElementById("serverConfig").checked;
+            let partReturn     = document.getElementById("partReturn").checked;
+            let unmount        = document.getElementById("unmount").checked;
+
+            // 센터와 현재 위치
+            let center = "";
+            let currentLocation = "";
+            if (migrationType === "external") {
+                const from = document.getElementById("fromCenter").value;
+                const to = document.getElementById("toCenter").value;
+                center = `${from} → ${to}`;
+                currentLocation = from;
+            } else if (migrationType === "internal") {
+                const internal = document.getElementById("internalCenter").value;
+                center = `${internal} → ${internal}`;
+                currentLocation = internal;
+            }
+
+            return {
+                migrationType, center, currentLocation, vendor, serverCount, requester,
+                dueDate, partWork, reinstallOS, memo, agitLink,
+                centerMoved, workFile, mount, cabling, serverConfig, partReturn, unmount
+            };
         }
 
 
 
+        
+        function validateForm() {
+            const migrationType = document.getElementById("migrationType").value;
+            const fromCenter = document.getElementById("fromCenter").value;
+            const toCenter = document.getElementById("toCenter").value;
+            const internalCenter = document.getElementById("internalCenter").value;
+            const vendor = document.getElementById("vendor").value;
+            const serverCount = document.getElementById("serverCount").value;
+            const requester = document.getElementById("requester").value;
+        
+            if (!migrationType) {
+                alert("서버 이전 종류를 선택해주세요.");
+                return false;
+            }
+            if (document.getElementById("vendor").selectedIndex === 0) {
+                alert("벤더를 선택해주세요.");
+                return false;
+            }
+            if (migrationType === "external") {
+                if (document.getElementById("fromCenter").selectedIndex === 0 ||
+                    document.getElementById("toCenter").selectedIndex === 0) {
+                    alert("출발 센터와 도착 센터를 모두 선택해주세요.");
+                    return false;
+                }
+            }
+            if (migrationType === "internal") {
+                if (!internalCenter) {
+                    alert("내부 이전 센터를 선택해주세요.");
+                    return false;
+                }
+            }
+            if (!serverCount || serverCount <= 0) {
+                alert("서버 수를 입력해주세요.");
+                return false;
+            }
+            if (!requester) {
+                alert("작업 요청자를 입력해주세요.");
+                return false;
+            }
+            return true;
+        }
+        
+        ////////////////////////////
+        // 11. 폼 초기화 + toggle
+        ////////////////////////////
         function resetForm() {
             document.getElementById("migrationType").value = "";
             document.getElementById("vendor").value = "";
@@ -478,190 +870,103 @@
             document.getElementById("osInstall").checked = false;
             document.getElementById("memo").value = "";
             document.getElementById("agitLink").value = "";
-
-            toggleCenterSelect(); // 센터 선택창 초기화
-
+            document.getElementById("searchInput").value = "";
+        
+            toggleCenterSelect();
+        
             const saveBtn = document.getElementById("saveTaskButton");
             saveBtn.textContent = "SAVE";
             saveBtn.onclick = saveTask;
-
+        
             document.getElementById("cancelBtn").style.display = "none";
             document.getElementById("resetBtn").style.display = "inline-block";
         }
-
-
-
-
-        function cancelEdit() {
-            resetForm(); // 입력값 초기화
-            document.getElementById("cancelBtn").style.display = "none"; // 버튼 숨기기
-        }
-
-        async function toggleStatus(id, currentStatus) {
-            const nextStatus =
-                currentStatus === "진행전" ? "작업중" :
-                currentStatus === "작업중" ? "완료" : "진행전";
-
-            try {
-                const res = await fetch(`/api/tasks/${id}/status`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status: nextStatus })
-                });
-                const result = await res.json();
-                if (res.ok) {
-                    fetchAndDisplayTasks(); // 상태 갱신 후 테이블 다시 로딩
-                } else {
-                    alert("❌ 상태 업데이트 실패: " + result.error);
-                }
-            } catch (err) {
-                console.error("상태 변경 오류:", err);
-                alert("⚠️ 상태 변경 중 오류 발생");
-            }
-        }
-
-
         
+        function toggleCenterSelect() {
+            const type = document.getElementById("migrationType").value;
+            document.getElementById("centerSelectSection").style.display = 
+                (type === "external") ? "inline-block" : "none";
+            document.getElementById("internalCenterSection").style.display = 
+                (type === "internal") ? "inline-block" : "none";
+        }
+        
+        ////////////////////////////
+        // 12. 필터링
+        ////////////////////////////
+        function filterByCenter(center) {
+            selectedCenter = center;
+            currentPage = 1;
+            updateDisplayedTasks();
+        }
 
-        function toggleCheckbox(checkbox, id, field) {
-            const checked = checkbox.checked;
+        function filterByStatus(status) {
+            selectedStatus = status;
+            currentPage = 1;
 
-            fetch(`/api/tasks/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ [field]: checked })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (!result || !result.success) {
-                    alert("❌ 상태 업데이트 실패");
-                    checkbox.checked = !checked; // 롤백
+            document.querySelectorAll('#statusFilter button').forEach(btn => {
+                btn.classList.remove("active-status");
+                if (btn.getAttribute("data-status") === status) {
+                    btn.classList.add("active-status");
                 }
-            })
-            .catch(err => {
-                console.error("🔧 상태 반영 오류:", err);
-                alert("⚠️ 서버 오류로 인해 반영되지 않았습니다.");
-                checkbox.checked = !checked; // 롤백
             });
+
+            updateDisplayedTasks();
         }
 
-
-        function renderCheckbox(checked, id, field) {
-            console.log("📌 renderCheckbox - id:", id, "field:", field);
-            return `<input type="checkbox" ${checked ? "checked" : ""} onclick="toggleCheckbox(this, '${id}', '${field}')" />`;
+        function setCenterFilter(center) {
+            selectedCenter = center;
+            updateDisplayedTasks();
+            highlightActiveFilter("center", center);
         }
 
-
-        async function deleteTask(id) {
-            const confirmDelete = confirm("정말 삭제하시겠습니까?");
-            if (!confirmDelete) return;
-
-            try {
-                const res = await fetch(`/api/tasks/${id}`, {
-                    method: "DELETE",
-                });
-                const result = await res.json();
-                if (res.ok) {
-                    alert("🗑️ 삭제 완료!");
-                    fetchAndDisplayTasks(); // 테이블 갱신
-                } else {
-                    alert("❌ 삭제 실패: " + result.error);
-                }
-            } catch (err) {
-                console.error("삭제 오류:", err);
-                alert("⚠️ 서버 오류로 삭제 실패");
-            }
+        function setStatusFilter(status) {
+            selectedStatus = status;
+            updateDisplayedTasks();
+            highlightActiveFilter("status", status);
         }
 
-        function validateForm() {
-            const migrationType = document.getElementById("migrationType").value;
-            const fromCenter = document.getElementById("fromCenter").value;
-            const toCenter = document.getElementById("toCenter").value;
-            const internalCenter = document.getElementById("internalCenter").value;
-            const vendor = document.getElementById("vendor").value;
-            const serverCount = document.getElementById("serverCount").value;
-            const requester = document.getElementById("requester").value;
+        function highlightActiveFilter(type, selectedValue) {
+            const allBtns = document.querySelectorAll(`.filter-btn`);
+            allBtns.forEach(btn => {
+                // 센터 필터인지 상태 필터인지 구분
+                const isCenter = btn.onclick?.toString().includes('setCenterFilter');
+                const isStatus = btn.onclick?.toString().includes('setStatusFilter');
 
-            // 공통 필수값 검사
-            if (!migrationType) {
-                alert("서버 이전 종류를 선택해주세요.");
-                return false;
-            }
-
-            if (document.getElementById("vendor").selectedIndex === 0) {
-                alert("벤더를 선택해주세요.");
-                return false;
-            }
-
-            // 외부 이전일 경우 센터 모두 선택했는지 확인
-            if (migrationType === "external") {
                 if (
-                    document.getElementById("fromCenter").selectedIndex === 0 ||
-                    document.getElementById("toCenter").selectedIndex === 0
+                    (type === "center" && isCenter && btn.textContent === selectedValue) ||
+                    (type === "status" && isStatus && btn.textContent === selectedValue)
                 ) {
-                    alert("출발 센터와 도착 센터를 모두 선택해주세요.");
-                    return false;
+                    btn.classList.add("active");
+                } else if ((type === "center" && isCenter) || (type === "status" && isStatus)) {
+                    btn.classList.remove("active");
                 }
-            }
-
-            // 내부 이전일 경우 센터 선택 확인
-            if (migrationType === "internal") {
-                if (!internalCenter) {
-                    alert("내부 이전 센터를 선택해주세요.");
-                    return false;
-                }
-            }
-
-            if (!serverCount || serverCount <= 0) {
-                alert("서버 수를 입력해주세요.");
-                return false;
-            }
-
-            if (!requester) {
-                alert("작업 요청자를 입력해주세요.");
-                return false;
-            }
-
-
-
-            return true; // 검증 통과
-        }
-
-        function renderCustomCheckbox(id, field, value) {
-            if (value === "✖") return "✖";
-
-            const isChecked = value === "checked" ? "checked" : "";
-            return `<input type="checkbox" ${isChecked} onclick="toggleCustomCheckbox(this, '${id}', '${field}')" />`;
-        }
-
-        function toggleCustomCheckbox(checkbox, id, field) {
-            const newValue = checkbox.checked ? "checked" : "unchecked";
-
-            fetch(`/api/tasks/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ [field]: newValue })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (!result || !result.success) {
-                    alert("❌ 상태 반영 실패");
-                    checkbox.checked = !checkbox.checked; // 롤백
-                }
-            })
-            .catch(err => {
-                console.error("체크박스 반영 오류:", err);
-                alert("⚠️ 서버 오류");
-                checkbox.checked = !checkbox.checked;
             });
         }
 
+        ////////////////////////////
+        // 13. 통계
+        ////////////////////////////
+        function renderStatusSummary(filteredTasks) {
+            const total = filteredTasks.length;
+            const countByStatus = {
+                진행전: 0,
+                작업중: 0,
+                완료: 0
+            };
+
+            filteredTasks.forEach(task => {
+                const status = task.status || "진행전";
+                countByStatus[status] = (countByStatus[status] || 0) + 1;
+            });
+
+            const label = selectedCenter === "ALL" ? "전체" : `${selectedCenter}`;
+            const summaryText = `📊 ${label} 전체: ${total} / 진행전: ${countByStatus["진행전"]} / 작업중: ${countByStatus["작업중"]} / 완료: ${countByStatus["완료"]}`;
+
+            document.getElementById("statusSummary").textContent = summaryText;
+        }
 
 
-
-        window.onload = fetchAndDisplayTasks;
-
-
-    </script>
+        </script>
+        
 </body>
 </html>
