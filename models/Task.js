@@ -48,8 +48,8 @@ const taskSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['진행전', '작업중', '완료'],
-        default: '진행전'
+        enum: ['요청', '진행', '완료'],
+        default: '요청'
     },
     centerMoved: {
         type: Boolean,
