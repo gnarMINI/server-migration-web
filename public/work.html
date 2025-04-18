@@ -12,8 +12,11 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f4f4f4;
+            font-size: 13px;
         }
         .container {
+            max-width: 100%;
+            width: 100%;
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -128,7 +131,7 @@
             background-color: #fff7d9 !important;
         }
         .urgent-3week {
-            background-color: #ecf9ff !important;
+            background-color: #f2fbff !important;
         }
         .completed-row { 
             background-color: #e0e0e0 !important; 
@@ -165,151 +168,207 @@
         }
 
         .filter-btn.active {
-            background: #007bff;
-            color: white;
-            font-weight: bold;
-            border-color: #007bff;
+        background-color: #0d6efd;
+        color: white;
+        font-weight: bold;
+        border-color: #0d6efd;
         }
 
 
     </style>
 </head>
-<body>
-    <div class="container my-4">
-        <h4 class="mb-3">Kakao IDC team 서버 이전 리스트</h4>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" >Kakao IDC team 서버 이전 리스트</a>
       
-        <!-- 센터 필터 버튼 -->
-        <div class="mb-3">
-          <strong>센터:</strong>
-          <div class="btn-group" role="group" aria-label="센터 필터">
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('ALL')">ALL</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('AS')">AS</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('AY')">AY</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('PG')">PG</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('MD')">MD</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('GS')">GS</button>
-            <button class="btn btn-outline-secondary filter-btn" onclick="setCenterFilter('HN')">HN</button>
-          </div>
-        </div>
+      </div>
+    </div>
+  </nav>
+<body>
+    <div class="container-fluid my-4">
+
       
         <!-- 작업 등록 박스 -->
-        <div class="card p-4">
-          <h5 class="card-title mb-3">작업 등록</h5>
-          <form>
-            <div class="row g-3 align-items-center mb-2">
-              <div class="col-auto">
-                <label class="form-label">서버 이전 종류</label>
-                <select id="migrationType" class="form-select form-select-sm" onchange="toggleCenterSelect()">
-                  <option value="" disabled selected>작업 종류 선택</option>
-                  <option value="external">센터 간 이전</option>
-                  <option value="internal">내부 이전</option>
-                </select>
-              </div>
-      
-              <div id="centerSelectSection" class="col-auto d-none">
-                <label class="form-label">센터 간 이전</label><br>
-                <select id="fromCenter" class="form-select form-select-sm d-inline w-auto">
-                  <option disabled selected>출발 센터</option>
-                  <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
-                </select>
-                to
-                <select id="toCenter" class="form-select form-select-sm d-inline w-auto">
-                  <option disabled selected>도착 센터</option>
-                  <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
-                </select>
-              </div>
-      
-              <div id="internalCenterSection" class="col-auto d-none">
-                <label class="form-label">작업 센터</label>
-                <select id="internalCenter" class="form-select form-select-sm">
-                  <option disabled selected>센터 선택</option>
-                  <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
-                </select>
-              </div>
-            </div>
-      
-            <div class="row g-3 mb-2">
-              <div class="col-md-2">
-                <label class="form-label">벤더</label>
-                <select id="vendor" class="form-select form-select-sm">
-                  <option disabled selected>벤더 선택</option>
-                  <option>KAYTUS</option><option>XFUSION</option><option>DELL</option><option>HPE</option><option>SUPERMICRO</option><option>복합</option><option>기타</option>
-                </select>
-              </div>
-              <div class="col-md-1">
-                <label class="form-label">서버 수</label>
-                <input id="serverCount" type="number" min="0" class="form-control form-control-sm" placeholder="ex) 1">
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">요청자</label>
-                <input id="requester" type="text" class="form-control form-control-sm" placeholder="ex) gnar">
-              </div>
-              <div class="col-md-2">
-                <label class="form-label">희망 완료일</label>
-                <input id="dueDate" type="date" class="form-control form-control-sm">
-              </div>
-              <div class="col-md-2 d-flex align-items-end">
-                <div class="form-check me-2">
-                  <input id="partWork" class="form-check-input" type="checkbox">
-                  <label class="form-check-label">파트작업</label>
+        <div class="row">
+            <div class="col-lg-8">
+              <div class="card card-form p-3">
+              <h5 class="card-title mb-1">작업 등록</h5>
+              <hr>
+              <form>
+                <div class="row g-2 mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">서버 이전 종류</label>
+                    <select id="migrationType" class="form-select form-select-sm" onchange="toggleCenterSelect()">
+                      <option value="" disabled selected>작업 종류 선택</option>
+                      <option value="external">센터 간 이전</option>
+                      <option value="internal">내부 이전</option>
+                    </select>
+                  </div>
+                  <div id="centerSelectSection" class="col-md-8 d-none">
+                    <label class="form-label">센터 간 이전</label>
+                    <div class="input-group input-group-sm">
+                      <select id="fromCenter" class="form-select">
+                        <option disabled selected>출발 센터</option>
+                        <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
+                      </select>
+                      <span class="input-group-text">→</span>
+                      <select id="toCenter" class="form-select">
+                        <option disabled selected>도착 센터</option>
+                        <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div id="internalCenterSection" class="col-md-4 d-none">
+                    <label class="form-label">작업 센터</label>
+                    <select id="internalCenter" class="form-select form-select-sm">
+                      <option disabled selected>센터 선택</option>
+                      <option>AS</option><option>AY</option><option>PG</option><option>MD</option><option>GS</option><option>HN</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="form-check">
-                  <input id="osInstall" class="form-check-input" type="checkbox">
-                  <label class="form-check-label">OS 설치</label>
+              
+                <div class="row g-2 mb-3">
+                  <div class="col-md-2">
+                    <label class="form-label">벤더</label>
+                    <select id="vendor" class="form-select form-select-sm">
+                      <option disabled selected>벤더 선택</option>
+                      <option>KAYTUS</option><option>XFUSION</option><option>DELL</option>
+                      <option>HPE</option><option>SUPERMICRO</option><option>복합</option><option>기타</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">서버 수</label>
+                    <input id="serverCount" type="number" class="form-control form-control-sm" placeholder="ex) 10">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">요청자</label>
+                    <input id="requester" type="text" class="form-control form-control-sm" placeholder="ex) gnar">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">희망 완료일</label>
+                    <input id="dueDate" type="date" class="form-control form-control-sm">
+                  </div>
+                    <div class="col-md-4">
+                      <label class="form-label">작업 옵션</label>
+                      <div class="card p-1 bg-light">
+                          <div class="d-flex gap-3 align-items-center justify-content-center">
+                          <div class="form-check">
+                            <input id="partWork" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="partWork">파트작업</label>
+                          </div>
+                          <div class="form-check">
+                            <input id="osInstall" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="osInstall">OS 설치</label>
+                          </div>
+                          <div class="form-check">
+                            <input id="vendorMigration" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="vendorMigration">벤더 이전</label>
+                          </div>
+                          <div class="form-check">
+                            <input id="serverConfig" class="form-check-input" type="checkbox">
+                            <label class="form-check-label" for="serverConfig">서버 설정</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-      
-            <div class="mb-2">
-              <label class="form-label">비고</label>
-              <textarea id="memo" class="form-control" rows="1"></textarea>
-            </div>
-      
-            <div class="mb-2">
-              <label class="form-label">Agit Link</label>
-              <input id="agitLink" type="text" class="form-control" placeholder="링크를 통햐여 검색되니 정확히 입력부탁드립니다.">
-            </div>
-      
-            <div class="d-flex justify-content-start gap-2">
-              <button id="saveTaskButton" type="button" class="btn btn-primary " onclick="saveTask()">SAVE</button>
-              <button id="resetBtn" type="button" class="btn btn btn-warning " onclick="resetForm()">초기화</button>
-              <button id="cancelBtn" type="button" class="btn btn btn-danger" style="display: none;" onclick="cancelEdit()">취소</button>
-            </div>
-      
-            <!-- 숨겨진 필드 -->
-            <input type="checkbox" id="centerMoved" hidden>
-            <input type="checkbox" id="workFile" hidden>
-            <input type="checkbox" id="mount" hidden>
-            <input type="checkbox" id="cabling" hidden>
-            <input type="checkbox" id="serverConfig" hidden>
-            <input type="checkbox" id="partReturn" hidden>
-            <input type="checkbox" id="unmount" hidden>
-          </form>
-        </div>
-      </div>
-      
+              
 
-        <div style="margin-bottom: 10px;">
-            <span><strong>진행 상태:</strong></span>
-            <button class="filter-btn" onclick="setStatusFilter('ALL')">ALL</button>
-            <button class="filter-btn" onclick="setStatusFilter('요청')">요청</button>
-            <button class="filter-btn" onclick="setStatusFilter('진행')">진행</button>
-            <button class="filter-btn" onclick="setStatusFilter('완료')">완료</button>
+                  <div class="mb-3">
+                    <label class="form-label">비고</label>
+                    <textarea id="memo" class="form-control form-control-sm" rows="1" placeholder="비고를 입력해주세요"></textarea>
+                  </div>
+
+                  <div class="mb-2" style="font-size: 12px;">
+                    <label class="form-label" style="font-size: 12px;">비고 키워드 추가</label>
+                    <div id="memoKeywordButtons" class="d-flex flex-wrap gap-1 mt-1">
+                      <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-1" style="font-size: 11px;" onclick="addMemoTag('25G NIC 증설')">25G NIC 증설</button>
+                      <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-1" style="font-size: 11px;" onclick="addMemoTag('10G NIC 제거')">10G NIC 제거</button>
+                      <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-1" style="font-size: 11px;" onclick="addMemoTag('메모리 증설')">메모리 증설</button>
+                      <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-1" style="font-size: 11px;" onclick="addMemoTag('메모리 제거')">메모리 제거</button>
+                      <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-1" style="font-size: 11px;" onclick="addMemoTag('RAID 작업')">RAID 작업</button>
+                    </div>
+                  </div>
+              
+                <div class="mb-3">
+                  <label class="form-label">Agit Link</label>
+                  <input id="agitLink" type="text" class="form-control form-control-sm" placeholder="정확히 입력해주세요">
+                </div>
+              
+                <div class="d-flex gap-2">
+                  <button id="saveTaskButton" type="button" class="btn btn-sm btn-primary" onclick="saveTask()">SAVE</button>
+                  <button id="resetBtn" type="button" class="btn btn-sm btn-warning" onclick="resetForm()">초기화</button>
+                  <button id="cancelBtn" type="button" class="btn btn-sm btn-danger" style="display: none;" onclick="cancelEdit()">취소</button>
+                </div>
+              
+                <!-- 숨겨진 체크박스 -->
+                <input type="checkbox" id="centerMoved" hidden>
+                <input type="checkbox" id="workFile" hidden>
+                <input type="checkbox" id="mount" hidden>
+                <input type="checkbox" id="cabling" hidden>
+                <input type="checkbox" id="unmount" hidden>
+
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card card-summary shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-2">
+                  📊 작업 현황 <span class="text-muted" style="font-size: 13px;">(센터별 서버 수)</span>
+                </h5>
+                <hr>
+                <div id="centerProgressStats" style="font-size: 13px;">
+                  <!-- JS로 Progress Bar 삽입 -->
+                </div>
+                <p class="mt-3 mb-0 text-end text-muted" id="totalServerCount" style="font-size: 12px;"></p>
+              </div>
+            </div>
+          </div>
         </div>
-          
-        <div style="margin-bottom: 10px;">
-            🔍 <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="요청자 또는 Agit 링크로 검색" 
-                oninput="handleSearch()"
-                style="padding: 6px 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px;"
+        </div>
+        </div>
+        <hr>
+        <!-- 센터 필터 버튼 -->
+        <div class="d-flex justify-content-between align-items-center my-2">
+            
+            <div class="btn-group" role="group" id="centerFilterGroup">
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('ALL')">ALL</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('AS')">AS</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('AY')">AY</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('PG')">PG</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('MD')">MD</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('GS')">GS</button>
+            <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="setCenterFilter('HN')">HN</button>
+          </div>
+          <div>
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="요청자 또는 Agit 링크로 검색" 
+              oninput="handleSearch()"
+              class="form-control form-control-sm"
+              style="padding: 6px 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px;"
             >
+          </div>
         </div>
 
+        <div class="d-flex justify-content-between align-items-center my-2">
+
+        <div class="btn-group" role="group" id="statusFilterGroup">
+          <button type="button" class="btn btn-sm btn-outline-secondary filter-btn active" onclick="setStatusFilter('ALL')">ALL</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary filter-btn" onclick="setStatusFilter('요청')">요청</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary filter-btn" onclick="setStatusFilter('진행')">진행</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary filter-btn" onclick="setStatusFilter('완료')">완료</button>
+        </div>
         <div id="statusSummary" style="margin: 10px 0; font-weight: bold;"></div>
+      </div>
+          
 
+        
 
+        <hr>
         <div class="table-responsive mt-4">
             <table class="table table-bordered table-hover table-sm align-middle text-center">
               <thead class="table-light">
@@ -329,11 +388,12 @@
                   <th>포설</th>
                   <th>파트 작업</th>
                   <th>OS 설치</th>
+                  <th>벤더 이전</th>
                   <th>서버 설정</th>
-                  <th>파트 반납</th>
                   <th>비고</th>
                   <th>Agit Link</th>
-                  <th>수정 / 삭제</th>
+                  <th>수정</th>
+                  <th>삭제</th>
                 </tr>
               </thead>
               <tbody>
@@ -358,8 +418,13 @@
         let selectedCenter = "ALL";  // 선택된 센터 필터 (기본은 전체 보기)
         let selectedStatus = "ALL";
 
+        window.onload = () => {
+        setCenterFilter("ALL");    // 센터 필터 기본값
+        setStatusFilter("ALL");    // 상태 필터 기본값
+        fetchAndDisplayTasks();    // 페이지 로드 시 목록 불러오기
+        };
         
-        window.onload = fetchAndDisplayTasks; // 페이지 로드 시 목록 불러오기
+ 
         
         ////////////////////////////
         // 1. 목록 불러오기 + 검색
@@ -399,7 +464,8 @@
 
             // 3) 통계 요약 표시
             renderStatusSummary(filtered); 
-        
+            renderCenterEmojiStats(filtered);
+
             // 4) 페이지네이션: currentPage, itemsPerPage 기준
             const start = (currentPage - 1) * itemsPerPage;
             const pageItems = filtered.slice(start, start + itemsPerPage);
@@ -497,6 +563,8 @@
             const table = document.querySelector("table");
             let tableBody = table.querySelector("tbody");
 
+  
+
             if (!tableBody) {
                 tableBody = document.createElement("tbody");
                 table.appendChild(tableBody);
@@ -522,6 +590,13 @@
                     else if (diffDays <= 21) row.classList.add("table-info");
                 }
 
+                let locationClass = "btn-secondary"; // 현재위치 버튼 색상 구현
+
+                if (task.migrationType === "external") {
+                    const [from, to] = task.center.split(" → ");
+                    locationClass = task.currentLocation === from ? "btn-primary" : "btn-secondary";
+                }
+
                 row.innerHTML = `
                     <td>
                         <button 
@@ -534,7 +609,7 @@
                     <td>${task.dueDate || "-"}</td>
                     <td>
                         <button 
-                            class="btn btn-secondary btn-sm"
+                            class="btn btn-sm ${locationClass}"
                             onclick="toggleLocation('${task._id}', '${task.currentLocation}', '${task.center}', '${task.migrationType}')"
                             title="위치 변경">
                             ${task.currentLocation}
@@ -552,8 +627,8 @@
                     <td>${renderCheckbox(task.cabling, task._id, 'cabling')}</td>
                     <td>${renderCustomCheckbox(task._id, 'partWork', task.partWork)}</td>
                     <td>${renderCustomCheckbox(task._id, 'reinstallOS', task.reinstallOS)}</td>
-                    <td>${renderCheckbox(task.serverConfig, task._id, 'serverConfig')}</td>
-                    <td>${renderCheckbox(task.partReturn, task._id, 'partReturn')}</td>
+                    <td>${task.vendorMigration ? "O" : "✖"}</td>
+                    <td>${renderCustomCheckbox(task._id, 'serverConfig', task.serverConfig)}</td>
                     <td>
                     ${task.memo
                         ? `<span data-bs-toggle="tooltip" title="${task.memo}" style="cursor: help;">⁉️</span>`
@@ -570,11 +645,14 @@
 
                     <td>
                         <button class="btn btn-light btn-sm" onclick="editTask('${task._id}')">✏️</button>
+                    </td>
+                    <td>
                         <button class="btn btn-light btn-sm" onclick="deleteTask('${task._id}')">🗑️</button>
                     </td>
                 `;
-
                 tableBody.appendChild(row);
+
+                
             });
         }
 
@@ -725,6 +803,7 @@
                     alert("✅ 저장 완료!");
                     resetForm();
                     await fetchAndDisplayTasks(); // 새 목록 반영
+                    
                 } else {
                     alert("❌ 저장 실패: " + result.error);
                 }
@@ -810,6 +889,8 @@
                 document.getElementById("dueDate").value = task.dueDate;
                 document.getElementById("partWork").checked = !(task.partWork === "✖");
                 document.getElementById("osInstall").checked = !(task.reinstallOS === "✖");
+                document.getElementById("serverConfig").checked = !(task.serverConfig === "✖");
+                document.getElementById("vendorMigration").checked = !!task.vendorMigration;
                 document.getElementById("memo").value = task.memo;
                 document.getElementById("agitLink").value = task.agitLink;
                 // 일반 체크박스 필드들 반영
@@ -817,8 +898,6 @@
                 document.getElementById("workFile").checked       = task.workFile;
                 document.getElementById("mount").checked          = task.mount;
                 document.getElementById("cabling").checked        = task.cabling;
-                document.getElementById("serverConfig").checked   = task.serverConfig;
-                document.getElementById("partReturn").checked     = task.partReturn;
                 document.getElementById("unmount").checked        = task.unmount;
                 // 저장 버튼을 UPDATE 모드로 전환
                 const saveBtn = document.getElementById("saveTaskButton");
@@ -850,17 +929,20 @@
             const memo = document.getElementById("memo").value;
             const agitLink = document.getElementById("agitLink").value;
 
-            // 사용자 정의 체크박스
-            const partWorkChecked = document.getElementById("partWork").checked;
-            const osInstallChecked = document.getElementById("osInstall").checked;
+            let partWork = "✖";
+            let reinstallOS = "✖";
+            let serverConfig = "✖";
+            const vendorMigration = document.getElementById("vendorMigration").checked;
 
-            let partWork = partWorkChecked ? "unchecked" : "✖";
-            let reinstallOS = osInstallChecked ? "unchecked" : "✖";
-
-            // 수정 모드에서는 기존 값이 ✖이면 유지
             if (existingTask) {
-                if (existingTask.partWork === "✖") partWork = "✖";
-                if (existingTask.reinstallOS === "✖") reinstallOS = "✖";
+                // 기존 값이 ✖인 경우 유지
+                partWork = existingTask.partWork === "✖" ? "✖" : (document.getElementById("partWork").checked ? "checked" : "unchecked");
+                reinstallOS = existingTask.reinstallOS === "✖" ? "✖" : (document.getElementById("osInstall").checked ? "checked" : "unchecked");
+                serverConfig = existingTask.serverConfig === "✖" ? "✖" : (document.getElementById("serverConfig").checked ? "checked" : "unchecked");
+            } else {
+                partWork = document.getElementById("partWork").checked ? "unchecked" : "✖";
+                reinstallOS = document.getElementById("osInstall").checked ? "unchecked" : "✖";
+                serverConfig = document.getElementById("serverConfig").checked ? "unchecked" : "✖";
             }
 
             // 일반 체크박스 필드들 - DOM에서 직접 읽기 
@@ -868,8 +950,6 @@
             let workFile       = document.getElementById("workFile").checked;
             let mount          = document.getElementById("mount").checked;
             let cabling        = document.getElementById("cabling").checked;
-            let serverConfig   = document.getElementById("serverConfig").checked;
-            let partReturn     = document.getElementById("partReturn").checked;
             let unmount        = document.getElementById("unmount").checked;
 
             // 센터와 현재 위치
@@ -889,7 +969,7 @@
             return {
                 migrationType, center, currentLocation, vendor, serverCount, requester,
                 dueDate, partWork, reinstallOS, memo, agitLink,
-                centerMoved, workFile, mount, cabling, serverConfig, partReturn, unmount
+                centerMoved, workFile, mount, cabling, vendorMigration, serverConfig, unmount
             };
         }
 
@@ -951,6 +1031,8 @@
             document.getElementById("dueDate").value = "";
             document.getElementById("partWork").checked = false;
             document.getElementById("osInstall").checked = false;
+            document.getElementById("vendorMigration").checked = false;
+            document.getElementById("serverConfig").checked = false;
             document.getElementById("memo").value = "";
             document.getElementById("agitLink").value = "";
             document.getElementById("searchInput").value = "";
@@ -1053,12 +1135,70 @@
             });
 
             const label = selectedCenter === "ALL" ? "전체" : `${selectedCenter}`;
-            const summaryText = `[ 📊 ${label} ] 전체: ${total} / 요청: ${countByStatus["요청"]} / 진행: ${countByStatus["진행"]} / 완료: ${countByStatus["완료"]}`;
+            const summaryText = `[ 🏢 ${label} ] 전체: ${total} / 요청: ${countByStatus["요청"]} / 진행: ${countByStatus["진행"]} / 완료: ${countByStatus["완료"]}`;
 
             document.getElementById("statusSummary").textContent = summaryText;
         }
-       
 
+        //이모지 통계
+        function renderCenterEmojiStats(filteredTasks) {
+            const centerMap = {  AS: 0, AY: 0, PG: 0, MD: 0, GS: 0, HN: 0 };
+
+            filteredTasks.forEach(task => {
+                const location = task.currentLocation;
+                const count = Number(task.serverCount) || 0;
+                if (centerMap.hasOwnProperty(location)) {
+                    centerMap[location] += count;
+                }
+            });
+
+            const container = document.getElementById("centerEmojiStats");
+            container.innerHTML = "";
+
+            for (const center in centerMap) {
+                const emojiCount = Math.ceil(centerMap[center] / 10);
+                const emojis = "😢".repeat(emojiCount);
+                container.innerHTML += `<div><strong>${center}:</strong> ${emojis}</div>`;
+            }
+        }
+       
+        function renderCenterEmojiStats(filteredTasks) {
+        const centerMap = { AS: 0, AY: 0, PG: 0, MD: 0, GS: 0, HN: 0 };
+        let totalServers = 0;
+
+        filteredTasks.forEach(task => {
+            const location = task.currentLocation;
+            const count = Number(task.serverCount) || 0;
+            if (centerMap.hasOwnProperty(location)) {
+                centerMap[location] += count;
+                totalServers += count;
+            }
+        });
+
+        const container = document.getElementById("centerProgressStats");
+        const totalDisplay = document.getElementById("totalServerCount");
+        container.innerHTML = "";
+
+        for (const center in centerMap) {
+            const widthPx = centerMap[center] * 4; // 1대당 5px 너비
+            container.innerHTML += `
+                    <div class="mb-2">
+            <div class="d-flex justify-content-between">
+                <strong>${center}</strong>
+                <small>${centerMap[center]}대</small>
+            </div>
+            <div class="progress" style="height: 24px; background-color: #e9ecef;">
+                <div class="progress-bar bg-info text-start ps-2 fw-bold" role="progressbar" style="width: ${widthPx}px">
+                    
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        totalDisplay.textContent = `총 서버 수: ${totalServers}대`;
+    }
+       
         </script>
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 

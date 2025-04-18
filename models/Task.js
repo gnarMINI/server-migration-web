@@ -39,7 +39,11 @@ const taskSchema = new mongoose.Schema({
         type: String,
         enum: ['unchecked', 'checked', '✖'],
         default: '✖'
-    },    
+    },
+    vendorMigration: {
+        type: Boolean,
+        default: false
+    },
     memo: {
         type: String
     },
@@ -68,12 +72,9 @@ const taskSchema = new mongoose.Schema({
         default: false
     },
     serverConfig: {
-        type: Boolean,
-        default: false
-    },
-    partReturn: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum: ['unchecked', 'checked', '✖'],
+        default: '✖'
     },
     unmount: {
         type: Boolean,
